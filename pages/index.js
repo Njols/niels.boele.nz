@@ -7,6 +7,7 @@ import {
   ChakraProvider,
   useColorMode,
   useColorModeValue,
+  Text,
 } from "@chakra-ui/react";
 import Draggable from "react-draggable";
 import { motion, useAnimation, useMotionValue } from "framer-motion";
@@ -36,6 +37,7 @@ export default function Home() {
 
   return (
     <Box display="flex">
+      <Box flexGrow={1} flexDir="column" bgColor="secondaryGrey"></Box>
       <TarotCardDisplay
         tarotCard={tarotCard}
         nextTarotCard={nextTarotCard}
@@ -43,16 +45,18 @@ export default function Home() {
         pullCard={pullCard}
       />
       <Box
-        flexGrow={1}
+        flexGrow={6}
         flexDir="column"
         display="flex"
         h="100vh"
         zIndex={5}
         bgColor={useColorModeValue("#f0e7db", "#202023")}
+        justifyContent="center"
       >
-        <Box justifySelf="center">
+        <Box marginLeft="24">
           <Heading variant="sub-title">{tarotCardTitle}</Heading>
-          <Heading fontSize="6xl">Niels Boelens</Heading>
+          <Heading fontSize="7xl">Niels Boelens</Heading>
+          <Text>Web / Game Developer</Text>
         </Box>
       </Box>
     </Box>
