@@ -47,7 +47,7 @@ export default function Home() {
         flexDir="column"
         display="flex"
         h="100vh"
-        zIndex="3"
+        zIndex={5}
         bgColor={useColorModeValue("#f0e7db", "#202023")}
       >
         <Box justifySelf="center">

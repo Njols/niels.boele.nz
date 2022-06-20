@@ -1,13 +1,17 @@
 import { Box, Img, useColorModeValue } from "@chakra-ui/react";
 import { motion, useAnimation } from "framer-motion";
 import { useState } from "react";
+import { Icon } from "@chakra-ui/react";
+import { FaArrowsAltH } from "react-icons/fa";
 import Draggable from "react-draggable";
 
 function TarotCardDisplay(props) {
   const [dragDistanceX, setDragDistanceX] = useState(0);
   const [draggablePosition, setDraggablePosition] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
   const cardControls = useAnimation();
+  const iconControls = useAnimation();
 
   const onCardDrag = async (e, d) => {
     setIsDragging(true);
@@ -27,6 +31,17 @@ function TarotCardDisplay(props) {
   const onCardDragStop = () => {
     setIsDragging(false);
   };
+
+  const onCardLoad = () => {
+    props.onCardLoad();
+    if (isFirstLoad) {
+      iconControls.start({
+        x: [-30, 30, 0],
+      });
+      setIsFirstLoad(false);
+    }
+  };
+
   return (
     <Box display="flex">
       <Box
@@ -63,7 +78,7 @@ function TarotCardDisplay(props) {
               style={{
                 minHeight: "50%",
                 minWidth: "50%",
-                zIndex: 2,
+                zIndex: 3,
                 position: "absolute",
                 cursor: isDragging ? "grabbing" : "grab",
               }}
@@ -73,9 +88,21 @@ function TarotCardDisplay(props) {
               }}
               initial={{ opacity: 0 }}
             />
+            <motion.div
+              style={{
+                position: "absolute",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                zIndex: 2,
+              }}
+              animate={iconControls}
+            >
+              <Icon as={FaArrowsAltH} w={8} h={8} />
+            </motion.div>
             <Img
               src={props.tarotCard.url}
-              onLoad={props.onCardLoad}
+              onLoad={onCardLoad}
               height="100vh"
               filter="invert(61%) sepia(31%) saturate(4161%) hue-rotate(359deg) brightness(100%) contrast(102%)"
             />
