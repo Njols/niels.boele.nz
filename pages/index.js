@@ -10,16 +10,12 @@ import {
 } from "@chakra-ui/react";
 import Draggable from "react-draggable";
 import { motion, useAnimation, useMotionValue } from "framer-motion";
+import TarotCardDisplay from "../components/tarot-card-display";
 
 export default function Home() {
   const [tarotCard, setTarotCard] = useState({});
   const [nextTarotCard, setNextTarotCard] = useState({});
   const [tarotCardTitle, setTarotCardTitle] = useState("");
-
-  const [dragDistanceX, setDragDistanceX] = useState(0);
-  const [draggablePosition, setDraggablePosition] = useState(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const cardControls = useAnimation();
 
   const getRandomTarotCard = () => {
     let randomIndex = Math.floor(Math.random() * 78);
@@ -27,7 +23,7 @@ export default function Home() {
     return randomCard ? randomCard : getRandomTarotCard();
   };
 
-  const PullCard = () => {
+  const pullCard = () => {
     if (Object.entries(tarotCard).length === 0) {
       setTarotCard(getRandomTarotCard());
     } else {
@@ -36,87 +32,16 @@ export default function Home() {
     setNextTarotCard(getRandomTarotCard());
   };
 
-  const OnCardDrag = async (e, d) => {
-    setIsDragging(true);
-    setDragDistanceX((dragDistanceX += d.deltaX));
-    if (dragDistanceX < -150 || dragDistanceX > 150) {
-      setDraggablePosition({ x: dragDistanceX, y: 0 });
-      await cardControls.start({
-        opacity: 0,
-      });
-      setDraggablePosition({ x: 0, y: 0 });
-      PullCard();
-      cardControls.set({ opacity: 1 });
-      setDragDistanceX(0);
-    }
-  };
+  useEffect(() => pullCard, []);
 
-  const OnCardDragStop = () => {
-    setIsDragging(false);
-  };
-
-  useEffect(() => PullCard, []);
-
-  useEffect(() => {
-    const preloadImage = document.createElement("img");
-    preloadImage.src = nextTarotCard.url;
-  }, [nextTarotCard]);
   return (
     <Box display="flex">
-      <Box
-        minW="57vh"
-        bgColor={useColorModeValue("#FFFFFF", "#0A0B0B")}
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        pos="absolute"
-      >
-        <Img
-          src={nextTarotCard.url}
-          onLoad={() => setTarotCardTitle(tarotCard.name)}
-          height="100vh"
-          filter="invert(61%) sepia(31%) saturate(4161%) hue-rotate(359deg) brightness(100%) contrast(102%)"
-        />
-      </Box>
-      <motion.div animate={cardControls}>
-        <Draggable
-          axis="x"
-          onDrag={OnCardDrag}
-          onStop={OnCardDragStop}
-          position={draggablePosition}
-          handle="#draghandle"
-        >
-          <Box
-            minW="57vh"
-            bgColor={useColorModeValue("#FFFFFF", "#0A0B0B")}
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-          >
-            <motion.div
-              id="draghandle"
-              style={{
-                minHeight: "50%",
-                minWidth: "50%",
-                zIndex: 2,
-                position: "absolute",
-                cursor: isDragging ? "grabbing" : "grab",
-              }}
-              whileHover={{
-                backgroundColor: "white",
-                opacity: 0.5,
-              }}
-              initial={{ opacity: 0 }}
-            />
-            <Img
-              src={tarotCard.url}
-              onLoad={() => setTarotCardTitle(tarotCard.name)}
-              height="100vh"
-              filter="invert(61%) sepia(31%) saturate(4161%) hue-rotate(359deg) brightness(100%) contrast(102%)"
-            />
-          </Box>
-        </Draggable>
-      </motion.div>
+      <TarotCardDisplay
+        tarotCard={tarotCard}
+        nextTarotCard={nextTarotCard}
+        onCardLoad={() => setTarotCardTitle(tarotCard.name)}
+        pullCard={pullCard}
+      />
       <Box
         flexGrow={1}
         flexDir="column"
